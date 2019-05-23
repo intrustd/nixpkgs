@@ -1594,8 +1594,7 @@ lib.makeScope newScope (self: with self; {
       sha256 = "1qdxw9syhbvswiqj5dvj278lrmfhs81apzmvx6205s4vcqg7563v";
     };
     hardeningDisable = [ "bindnow" "relro" ];
-    nativeBuildInputs = [ pkgconfig ];
-    buildInputs = [ python ];
+    nativeBuildInputs = [ pkgconfig python ];
     meta.platforms = stdenv.lib.platforms.unix;
   }) {};
 
