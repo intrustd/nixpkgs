@@ -43,6 +43,8 @@
 let
   inherit (stdenv) isDarwin isFreeBSD isLinux isAarch32;
   inherit (stdenv.lib) optional optionals enableFeature;
+  
+  isMusl = stdenv.hostPlatform.libc == "musl";
 
   cmpVer = builtins.compareVersions;
   reqMin = requiredVersion: (cmpVer requiredVersion branch != 1);
@@ -163,7 +165,7 @@ stdenv.mkDerivation rec {
     libvdpau libvorbis lzma soxr x264 x265 xvidcore zlib libopus speex
   ] ++ optional openglSupport libGLU_combined
     ++ optional vpxSupport libvpx
-    ++ optionals (!isDarwin && !isAarch32) [ libpulseaudio ] # Need to be fixed on Darwin and ARM
+    ++ optionals (!isDarwin && !isAarch32 && !isMusl) [ libpulseaudio ] # Need to be fixed on Darwin and ARM
     ++ optional ((isLinux || isFreeBSD) && !isAarch32) libva
     ++ optional isLinux alsaLib
     ++ optionals isDarwin darwinFrameworks
