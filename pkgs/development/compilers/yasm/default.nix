@@ -1,4 +1,4 @@
-{stdenv, fetchurl}:
+{stdenv, buildPackages, fetchurl}:
 
 stdenv.mkDerivation rec {
   name = "yasm-1.3.0";
