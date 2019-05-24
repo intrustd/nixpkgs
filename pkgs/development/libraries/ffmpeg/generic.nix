@@ -1,7 +1,7 @@
 { stdenv, fetchurl, pkgconfig, perl, texinfo, yasm
 , alsaLib, bzip2, fontconfig, freetype, gnutls, libiconv, lame, libass, libogg
 , libssh, libtheora, libva, libvorbis, libvpx, lzma, libpulseaudio, soxr
-, x264, x265, xvidcore, zlib, libopus, speex
+, x264, x265, xvidcore, zlib, libopus, speex, buildPackages
 , openglSupport ? false, libGLU_combined ? null
 # Build options
 , runtimeCpuDetectBuild ? true # Detect CPU capabilities at runtime
@@ -161,7 +161,7 @@ stdenv.mkDerivation rec {
   ] ++ optional stdenv.cc.isClang "--cc=clang";
 
   nativeBuildInputs = [ perl pkgconfig texinfo yasm ];
-
+  depsBuildBuild = [ buildPackages.stdenv.cc ];
   buildInputs = [
     bzip2 fontconfig freetype gnutls.dev libiconv lame libass libogg libssh libtheora
     libvdpau libvorbis lzma soxr x264 x265 xvidcore zlib libopus speex
