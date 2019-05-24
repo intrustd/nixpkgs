@@ -819,7 +819,7 @@ lib.makeScope newScope (self: with self; {
     meta.platforms = stdenv.lib.platforms.unix;
   }) {};
 
-  libX11 = callPackage ({ stdenv, pkgconfig, fetchurl, inputproto, kbproto, libxcb, xextproto, xf86bigfontproto, xproto, xtrans }: stdenv.mkDerivation {
+  libX11 = callPackage ({ stdenv, pkgconfig, fetchurl, buildPackages, inputproto, kbproto, libxcb, xextproto, xf86bigfontproto, xproto, xtrans }: stdenv.mkDerivation {
     name = "libX11-1.6.6";
     builder = ./builder.sh;
     src = fetchurl {
@@ -828,6 +828,7 @@ lib.makeScope newScope (self: with self; {
     };
     hardeningDisable = [ "bindnow" "relro" ];
     nativeBuildInputs = [ pkgconfig ];
+    depsBuildBuild = [ buildPackages.stdenv.cc ];
     buildInputs = [ inputproto kbproto libxcb xextproto xf86bigfontproto xproto xtrans ];
     meta.platforms = stdenv.lib.platforms.unix;
   }) {};

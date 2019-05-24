@@ -3,7 +3,7 @@
 , gobjectSupport ? true, glib
 , xcbSupport ? true # no longer experimental since 1.12
 , glSupport ? true, libGL ? null # libGLU_combined is no longer a big dependency
-, pdfSupport ? true
+, pdfSupport ? true, x11Support ? true
 , darwin
 }:
 
@@ -35,8 +35,10 @@ in stdenv.mkDerivation rec {
   ]);
 
   propagatedBuildInputs =
-    with xorg; [ libXext fontconfig expat freetype pixman zlib libpng libXrender ]
-    ++ optionals xcbSupport [ libxcb xcbutil ]
+       with xorg;
+       optionals x11Support [ libXext libXrender ]
+    ++ [ fontconfig expat freetype pixman zlib libpng ]
+    ++ optionals xcbSupport  [ libxcb xcbutil ]
     ++ optional gobjectSupport glib
     ++ optional glSupport libGL
     ; # TODO: maybe liblzo but what would it be for here?
@@ -51,6 +53,8 @@ in stdenv.mkDerivation rec {
     ++ optional xcbSupport "--enable-xcb"
     ++ optional glSupport "--enable-gl"
     ++ optional pdfSupport "--enable-pdf"
+    ++ optionals (!x11Support) [ "--enable-xlib=no"
+                                 "--enable-xlib-xrender=no" ]
   );
 
   preConfigure =
