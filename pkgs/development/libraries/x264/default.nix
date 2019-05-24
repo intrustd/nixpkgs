@@ -1,4 +1,4 @@
-{stdenv, fetchurl, binutils, yasm, enable10bit ? false}:
+{stdenv, fetchurl, binutils-unwrapped, buildPackages, yasm, enable10bit ? false}:
 
 stdenv.mkDerivation rec {
   version = "20170731-2245";
@@ -18,6 +18,7 @@ stdenv.mkDerivation rec {
   preConfigure = ''
     # `AS' is set to the binutils assembler, but we need yasm
     unset AS
+    echo ${binutils-unwrapped}/bin/strings
   '';
 
   configureFlags = [ "--enable-shared" ]
@@ -25,7 +26,7 @@ stdenv.mkDerivation rec {
     ++ stdenv.lib.optional (enable10bit) "--bit-depth=10";
 
   nativeBuildInputs = [ yasm ];
-  buildInputs = [ binutils ];
+  depsBuildBuild = [ binutils-unwrapped ];
 
   meta = with stdenv.lib; {
     description = "Library for encoding H264/AVC video streams";
