@@ -1,4 +1,4 @@
-{stdenv, fetchurl, yasm, enable10bit ? false}:
+{stdenv, fetchurl, binutils, yasm, enable10bit ? false}:
 
 stdenv.mkDerivation rec {
   version = "20170731-2245";
@@ -24,7 +24,8 @@ stdenv.mkDerivation rec {
     ++ stdenv.lib.optional (!stdenv.isi686) "--enable-pic"
     ++ stdenv.lib.optional (enable10bit) "--bit-depth=10";
 
-  buildInputs = [ yasm ];
+  nativeBuildInputs = [ yasm ];
+  buildInputs = [ binutils ];
 
   meta = with stdenv.lib; {
     description = "Library for encoding H264/AVC video streams";
