@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, perl, yasm
+{ stdenv, fetchFromGitHub, perl, yasm, binutils-unwrapped, lib
 , vp8DecoderSupport ? true # VP8 decoder
 , vp8EncoderSupport ? true # VP8 encoder
 , vp9DecoderSupport ? true # VP9 decoder
@@ -39,7 +39,7 @@
 }:
 
 let
-  inherit (stdenv) is64bit isMips isDarwin isCygwin;
+  inherit (stdenv) is64bit isMips isDarwin isCygwin isx86_64;
   inherit (stdenv.lib) enableFeature optional optionals optionalString;
 
   isMusl = stdenv.hostPlatform.libc == "musl";
@@ -67,7 +67,8 @@ stdenv.mkDerivation rec {
     sha256 = "0vvh89hvp8qg9an9vcmwb7d9k3nixhxaz6zi65qdjnd0i56kkcz6";
   };
 
-  patchPhase = ''patchShebangs .'';
+  postPatch = ''patchShebangs .'';
+  patches = lib.optional isx86_64 ./x86_64-cross.patch;
 
   outputs = [ "bin" "dev" "out" ];
   setOutputFlags = false;
@@ -138,11 +139,11 @@ stdenv.mkDerivation rec {
     #"--prefix="
     #"--libc="
     #"--libdir="
-    "--enable-external-build"
+#    "--enable-external-build"
     # libvpx darwin targets include darwin version (ie. ARCH-darwinXX-gcc, XX being the darwin version)
     # See all_platforms: https://github.com/webmproject/libvpx/blob/master/configure
     # Darwin versions: 10.4=8, 10.5=9, 10.6=10, 10.7=11, 10.8=12, 10.9=13, 10.10=14
-    "--force-target=${stdenv.hostPlatform.config}${
+    "--force-target=${stdenv.hostPlatform.uname.processor}-${lib.toLower stdenv.hostPlatform.uname.system}${
             if stdenv.hostPlatform.isDarwin then
               if      stdenv.hostPlatform.osxMinVersion == "10.10" then "14"
               else if stdenv.hostPlatform.osxMinVersion == "10.9"  then "13"
@@ -160,7 +161,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ perl yasm ];
 
-  buildInputs = [ ]
+  buildInputs = [ binutils-unwrapped ]
     ++ optionals unitTestsSupport [ coreutils curl ];
 
   enableParallelBuilding = true;

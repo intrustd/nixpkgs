@@ -1,0 +1,24 @@
+diff -ru libvpx.old/vp8/encoder/onyx_if.c libvpx/vp8/encoder/onyx_if.c
+--- libvpx.old/vp8/encoder/onyx_if.c	1969-12-31 16:00:01.000000000 -0800
++++ libvpx/vp8/encoder/onyx_if.c	2019-05-24 09:49:49.824032252 -0700
+@@ -2051,13 +2051,13 @@
+   cpi->fn_ptr[BLOCK_4X4].sdx8f = vpx_sad4x4x8;
+   cpi->fn_ptr[BLOCK_4X4].sdx4df = vpx_sad4x4x4d;
+ 
+-#if ARCH_X86 || ARCH_X86_64
+-  cpi->fn_ptr[BLOCK_16X16].copymem = vp8_copy32xn;
+-  cpi->fn_ptr[BLOCK_16X8].copymem = vp8_copy32xn;
+-  cpi->fn_ptr[BLOCK_8X16].copymem = vp8_copy32xn;
+-  cpi->fn_ptr[BLOCK_8X8].copymem = vp8_copy32xn;
+-  cpi->fn_ptr[BLOCK_4X4].copymem = vp8_copy32xn;
+-#endif
++// #if ARCH_X86 || ARCH_X86_64
++//   cpi->fn_ptr[BLOCK_16X16].copymem = vp8_copy32xn;
++//   cpi->fn_ptr[BLOCK_16X8].copymem = vp8_copy32xn;
++//   cpi->fn_ptr[BLOCK_8X16].copymem = vp8_copy32xn;
++//   cpi->fn_ptr[BLOCK_8X8].copymem = vp8_copy32xn;
++//   cpi->fn_ptr[BLOCK_4X4].copymem = vp8_copy32xn;
++// #endif
+ 
+   cpi->full_search_sad = vp8_full_search_sad;
+   cpi->diamond_search_sad = vp8_diamond_search_sad;

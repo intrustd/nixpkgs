@@ -15,7 +15,8 @@
 # Darwin frameworks
 , Cocoa, darwinFrameworks ? [ Cocoa ]
 # Inherit generics
-, branch, sha256, version, patches ? [], ...
+, branch, sha256, version, patches ? []
+, buildPackages, lib, ...
 }:
 
 /* Maintainer notes:
@@ -56,7 +57,7 @@ let
   verFix = withoutFix: fixVer: withFix: if reqMatch fixVer then withFix else withoutFix;
 
   # Disable dependency that needs fixes before it will work on Darwin or Arm
-  disDarwinOrArmFix = origArg: minVer: fixArg: if ((isDarwin || isAarch32) && reqMin minVer) then fixArg else origArg;
+  disDarwinOrArmFix = origArg: minVer: fixArg: if ((isDarwin || isAarch32 || isMusl) && reqMin minVer) then fixArg else origArg;
 
   vaapiSupport = reqMin "0.6" && ((isLinux || isFreeBSD) && !isAarch32);
 
@@ -156,12 +157,13 @@ stdenv.mkDerivation rec {
   ] ++ optionals (stdenv.hostPlatform != stdenv.buildPlatform) [
       "--cross-prefix=${stdenv.cc.targetPrefix}"
       "--enable-cross-compile"
+      "--pkg-config=${lib.getBin buildPackages.pkgconfig}/bin/pkg-config"
   ] ++ optional stdenv.cc.isClang "--cc=clang";
 
   nativeBuildInputs = [ perl pkgconfig texinfo yasm ];
 
   buildInputs = [
-    bzip2 fontconfig freetype gnutls libiconv lame libass libogg libssh libtheora
+    bzip2 fontconfig freetype gnutls.dev libiconv lame libass libogg libssh libtheora
     libvdpau libvorbis lzma soxr x264 x265 xvidcore zlib libopus speex
   ] ++ optional openglSupport libGLU_combined
     ++ optional vpxSupport libvpx
