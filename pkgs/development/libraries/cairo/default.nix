@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, libiconv
+{ stdenv, fetchurl, pkgconfig, libiconv, binutils-unwrapped
 , libintl, expat, zlib, libpng, pixman, fontconfig, freetype, xorg
 , gobjectSupport ? true, glib
 , xcbSupport ? true # no longer experimental since 1.12
@@ -33,7 +33,7 @@ in stdenv.mkDerivation rec {
     ApplicationServices
     Carbon
   ]);
-
+  depsBuildBuild = [ binutils-unwrapped ];
   propagatedBuildInputs =
        with xorg;
        optionals x11Support [ libXext libXrender ]
