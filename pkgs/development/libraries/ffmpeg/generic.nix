@@ -1,7 +1,7 @@
 { stdenv, fetchurl, pkgconfig, perl, texinfo, yasm
 , alsaLib, bzip2, fontconfig, freetype, gnutls, libiconv, lame, libass, libogg
 , libssh, libtheora, libva, libvorbis, libvpx, lzma, libpulseaudio, soxr
-, x264, x265, xvidcore, zlib, libopus, speex, buildPackages
+, x264, x265, xvidcore, zlib, libopus, speex
 , openglSupport ? false, libGLU_combined ? null
 # Build options
 , runtimeCpuDetectBuild ? true # Detect CPU capabilities at runtime
