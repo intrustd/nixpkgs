@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchurl, fetchFromGitHub, libiconv, recode, autoreconfHook }:
+{ stdenv, lib, fetchurl, fetchFromGitHub, libiconv, recode, buildPackages }:
 
 stdenv.mkDerivation rec {
   name = "enca-${version}";
@@ -17,6 +17,7 @@ stdenv.mkDerivation rec {
     };
 
   buildInputs = [ recode libiconv ];
+  depsBuildBuild = [ buildPackages.stdenv.cc ];
 
   meta = with stdenv.lib; {
     description = "Detects the encoding of text files and reencodes them";
