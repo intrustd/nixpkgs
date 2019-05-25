@@ -16,17 +16,6 @@ stdenv.mkDerivation rec {
       sha256 = "1f78jmrggv3jymql8imm5m9yc8nqjw5l99mpwki2245l8357wj1s";
     };
 
-  patches = lib.optionals (stdenv.hostPlatform != stdenv.buildPlatform) [
-    (fetchpatch {
-      url = "https://github.com/nijel/enca/commit/2393833d133a6784e57215b89e4c4c0484555985.patch";
-      sha256 = "05m70lfmkxlhpigxg0yhs1v2wlb21bw62dgxsca2pnm0s0qznplb";
-    })
-    (fetchpatch {
-      url = "https://github.com/nijel/enca/commit/a38b8cec1f48dc6325450d097060c16ba0682d78.patch";
-      sha256 = "1zwpdx9sg3jy00rjhpvqwdgr3bgnkk4dpq8dmj1zjzm8sz0zm2cd";
-     })
-  ];
-
   buildInputs = [ recode libiconv ];
 
   meta = with stdenv.lib; {
@@ -41,6 +30,6 @@ stdenv.mkDerivation rec {
     '';
 
     license = licenses.gpl2;
-   
+
   };
 }
