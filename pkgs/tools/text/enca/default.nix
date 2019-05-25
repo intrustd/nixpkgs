@@ -15,7 +15,8 @@ stdenv.mkDerivation rec {
       sha256 = "05m70lfmkxlhpigxg0yhs1v2wlb21bw62dgxsca2pnm0s0qznplb";
     });
 
-  buildInputs = [ recode libiconv autoreconfHook ] ++
+  buildInputs = [ recode libiconv ];
+  nativeBuildInputs =
     lib.optional (stdenv.hostPlatform != stdenv.buildPlatform) autoreconfHook;
 
   meta = with stdenv.lib; {
