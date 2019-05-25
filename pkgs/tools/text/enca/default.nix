@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchurl, fetchpatch, libiconv, recode }:
+{ stdenv, lib, fetchurl, fetchpatch, libiconv, recode, autoreconfHook }:
 
 stdenv.mkDerivation rec {
   name = "enca-${version}";
@@ -15,7 +15,8 @@ stdenv.mkDerivation rec {
       sha256 = "05m70lfmkxlhpigxg0yhs1v2wlb21bw62dgxsca2pnm0s0qznplb";
     });
 
-  buildInputs = [ recode libiconv ];
+  buildInputs = [ recode libiconv autoreconfHook ] ++
+    lib.optional (stdenv.hostPlatform != stdenv.buildPlatform) autoreconfHook;
 
   meta = with stdenv.lib; {
     description = "Detects the encoding of text files and reencodes them";
