@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
   patches = lib.optional (stdenv.hostPlatform != stdenv.buildPlatform)
     (fetchpatch {
       url = "https://github.com/nijel/enca/commit/2393833d133a6784e57215b89e4c4c0484555985.patch";
-      sha256 = "1m46b7dipph0nk4vfl7kdniyc6g2vjldzi2qxwm4s3r2qr65q4q7";
+      sha256 = "05m70lfmkxlhpigxg0yhs1v2wlb21bw62dgxsca2pnm0s0qznplb";
     });
 
   buildInputs = [ recode libiconv ];
