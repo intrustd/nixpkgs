@@ -1257,7 +1257,7 @@ lib.makeScope newScope (self: with self; {
       sha256 = "1i27lvrcsygims1pddpl5c4qqs6z715lm12ax0n3vx0igapvg7x8";
     };
     hardeningDisable = [ "bindnow" "relro" ];
-    nativeBuildInputs = [ pkgconfig ];
+    nativeBuildInputs = [ pkgconfig python ];
     buildInputs = [ libxslt libpthreadstubs python libXau xcbproto libXdmcp ];
     meta.platforms = stdenv.lib.platforms.unix;
   }) {};
