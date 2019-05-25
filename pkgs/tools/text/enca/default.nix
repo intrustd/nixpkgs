@@ -1,14 +1,21 @@
-{ stdenv, lib, fetchurl, fetchpatch, libiconv, recode, autoreconfHook }:
+{ stdenv, lib, fetchurl, fetchFromGitHub, libiconv, recode, autoreconfHook }:
 
 stdenv.mkDerivation rec {
   name = "enca-${version}";
   version = "1.19";
 
-  src = fetchurl {
-    url = "https://dl.cihar.com/enca/${name}.tar.xz";
-    sha256 = "1f78jmrggv3jymql8imm5m9yc8nqjw5l99mpwki2245l8357wj1s";
-  };
-  
+  src = if stdenv.hostPlatform != stdenv.buildPlatform
+    then fetchFromGitHub {
+      owner = "nijel";
+      repo = "enca";
+      rev = "5de465b25a7e5dd432bf9b10f253391a1139e1c4";
+      sha256 = "0z5zlm6m0s0czx96ih5779cdaa4p84lqjxj6fb4ppv8ncp1nibdd";
+    }
+    else fetchurl {
+      url = "https://dl.cihar.com/enca/${name}.tar.xz";
+      sha256 = "1f78jmrggv3jymql8imm5m9yc8nqjw5l99mpwki2245l8357wj1s";
+    };
+
   patches = lib.optionals (stdenv.hostPlatform != stdenv.buildPlatform) [
     (fetchpatch {
       url = "https://github.com/nijel/enca/commit/2393833d133a6784e57215b89e4c4c0484555985.patch";
@@ -21,8 +28,6 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [ recode libiconv ];
-  nativeBuildInputs =
-    lib.optional (stdenv.hostPlatform != stdenv.buildPlatform) autoreconfHook;
 
   meta = with stdenv.lib; {
     description = "Detects the encoding of text files and reencodes them";
