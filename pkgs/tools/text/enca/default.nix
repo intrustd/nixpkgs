@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, libiconv, recode }:
+{ stdenv, lib, fetchurl, fetchpatch, libiconv, recode }:
 
 stdenv.mkDerivation rec {
   name = "enca-${version}";
@@ -8,6 +8,12 @@ stdenv.mkDerivation rec {
     url = "https://dl.cihar.com/enca/${name}.tar.xz";
     sha256 = "1f78jmrggv3jymql8imm5m9yc8nqjw5l99mpwki2245l8357wj1s";
   };
+  
+  patches = lib.optional (stdenv.hostPlatform != stdenv.buildPlatform)
+    (fetchpatch {
+      url = "https://github.com/nijel/enca/commit/2393833d133a6784e57215b89e4c4c0484555985.patch";
+      sha256 = "05m70lfmkxlhpigxg0yhs1v2wlb21bw62dgxsca2pnm0s0qznplb";
+    });
 
   buildInputs = [ recode libiconv ];
 
