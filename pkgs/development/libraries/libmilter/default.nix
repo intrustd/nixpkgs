@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, m4 }:
+{ stdenv, fetchurl, m4, buildPackages }:
 
 stdenv.mkDerivation rec {
   name = "libmilter-${version}";
@@ -13,6 +13,8 @@ stdenv.mkDerivation rec {
     mkdir -p $out/lib
     cd libmilter
     cat > a.m4 <<EOF
+      define(\`confCC', \`$CC')
+      define(\`confAR', \`$AR')
       define(\`confEBINDIR', \`$out/libexec')
       define(\`confINCLUDEDIR', \`$out/include')
       define(\`confLIBDIR', \`$out/lib')
@@ -31,7 +33,7 @@ stdenv.mkDerivation rec {
 
   patches = [ ./install.patch ./sharedlib.patch];
 
-  buildInputs = [ m4 ];
+  nativeBuildInputs = [ m4 ];
 
   meta = with stdenv.lib; {
     description = "Sendmail Milter mail filtering API library";

@@ -5124,6 +5124,8 @@ let
       url = "mirror://cpan/authors/id/J/JG/JGMYERS/${name}.tar.gz";
       sha256 = "834d893aa7db6ce3f158afbd0e432d6ed15a276e0940db0a74be13fd9c4bbbf1";
     };
+    depsBuildBuild = [ pkgs.buildPackages.perl ];
+    buildInputs = [ FileTemp ];
     nativeBuildInputs = [ pkgs.ld-is-cc-hook ];
     meta = {
       description = "An Encode::Encoding subclass that detects the encoding of data";
@@ -5235,6 +5237,7 @@ let
 
   Error = buildPerlModule rec {
     name = "Error-0.17026";
+    depsBuildBuild = [ pkgs.buildPackages.perl ];
     src = fetchurl {
       url = "mirror://cpan/authors/id/S/SH/SHLOMIF/${name}.tar.gz";
       sha256 = "1nam651w5ffsh64nnqjpzirm5g3ck92idzz1f0sf0fnp5jb0ln9p";
@@ -6171,6 +6174,16 @@ let
       license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
       homepage = "https://github.com/Perl-Toolchain-Gang/File-Temp";
     };
+    postInstall = stdenv.lib.optionalString (perl ? crossVersion) ''
+      mkdir -p $out/lib/perl5/site_perl/cross_perl/${perl.version}/File
+      cat >$out/lib/perl5/site_perl/cross_perl/${perl.version}/File/Temp.pm <<EOF
+      package File::Temp;
+      BEGIN {
+      our \$VERSION = "$version";
+      }
+      1;
+      EOF
+    '';
   };
 
   FileTouch = buildPerlPackage rec {
@@ -7857,6 +7870,9 @@ let
       url = "mirror://cpan/authors/id/N/NW/NWETTERS/${name}.tar.gz";
       sha256 = "88db833a5ab22ed06cb53d6f205725e3b5371b254596053738885e91fa105f75";
     };
+    postConfigure = ''
+      substituteInPlace Makefile --replace '$(PERLRUN)' '${pkgs.buildPackages.perl}/bin/perl'
+    '';
     propagatedBuildInputs = [ GeographyCountries ];
     meta = {
       description = "Fast lookup of country codes from IP addresses";
@@ -9181,6 +9197,7 @@ let
 
     buildInputs = [ ModuleBuild NetDNSResolverProgrammable ];
     propagatedBuildInputs = [ Error NetAddrIP NetDNS URI ];
+    depsBuildBuild = [ pkgs.buildPackages.perl ];
 
     buildPhase = "perl Build.PL --install_base=$out --install_path=\"sbin=$out/bin\" --install_path=\"lib=$out/lib/perl5/site_perl\"; ./Build build ";
 
@@ -9606,6 +9623,7 @@ let
       url = "mirror://cpan/authors/id/L/LE/LEONT/${name}.tar.gz";
       sha256 = "10n7ggpmicwq1n503pg7kiwslda0bz48azzjvc7vb9s4hbbibjm6";
     };
+    depsBuildBuild = [ pkgs.buildPackages.perl ];
     meta = {
       description = "Build and install Perl modules";
       license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
@@ -9618,6 +9636,7 @@ let
       url = mirror://cpan/authors/id/L/LE/LEONT/Module-Build-Deprecated-0.4210.tar.gz;
       sha256 = "be089313fc238ee2183473aca8c86b55fb3cf44797312cbe9b892d6362621703";
     };
+    depsBuildBuild = [ pkgs.buildPackages.perl ];
     doCheck = false;
     meta = {
       description = "A collection of modules removed from Module-Build";
