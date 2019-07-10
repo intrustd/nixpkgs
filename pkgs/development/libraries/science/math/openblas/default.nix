@@ -1,13 +1,19 @@
 { stdenv, fetchFromGitHub, fetchpatch, gfortran, perl, which, config, coreutils
+, buildPackages
 # Most packages depending on openblas expect integer width to match
 # pointer width, but some expect to use 32-bit integers always
 # (for compatibility with reference BLAS).
-, blas64 ? null
+, blas64 ? null, openmp ? true
 }:
 
 with stdenv.lib;
 
-let blas64_ = blas64; in
+let blas64_ = blas64; enableOpenMp = if openmp then "1" else "0";
+
+    isCross = stdenv.hostPlatform != stdenv.buildPlatform;
+    AR = if isCross then "${stdenv.hostPlatform.config}-ar" else "ar";
+    CC = if isCross then "${stdenv.hostPlatform.config}-cc" else "gcc";
+in
 
 let
   # To add support for a new platform, add an element to this set.
@@ -16,32 +22,32 @@ let
       BINARY = "32";
       TARGET = "ARMV6";
       DYNAMIC_ARCH = "0";
-      CC = "gcc";
-      USE_OPENMP = "1";
+      USE_OPENMP = enableOpenMp;
+      inherit AR CC;
     };
 
     armv7l-linux = {
       BINARY = "32";
       TARGET = "ARMV7";
       DYNAMIC_ARCH = "0";
-      CC = "gcc";
-      USE_OPENMP = "1";
+      USE_OPENMP = enableOpenMp;
+      inherit AR CC;
     };
 
     aarch64-linux = {
       BINARY = "64";
       TARGET = "ARMV8";
       DYNAMIC_ARCH = "1";
-      CC = "gcc";
-      USE_OPENMP = "1";
+      USE_OPENMP = enableOpenMp;
+      inherit AR CC;
     };
 
     i686-linux = {
       BINARY = "32";
       TARGET = "P2";
       DYNAMIC_ARCH = "1";
-      CC = "gcc";
       USE_OPENMP = "1";
+      inherit AR CC;
     };
 
     x86_64-darwin = {
@@ -59,8 +65,8 @@ let
       BINARY = "64";
       TARGET = "ATHLON";
       DYNAMIC_ARCH = "1";
-      CC = "gcc";
-      USE_OPENMP = "1";
+      USE_OPENMP = enableOpenMp;
+      inherit AR CC;
     };
   };
 in
