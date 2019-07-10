@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, makeWrapper, gcc, asciidoc }:
+{ stdenv, fetchurl, makeWrapper, gcc, asciidoc, autoreconfHook }:
 
 stdenv.mkDerivation rec {
   name = "colm-${version}";
@@ -9,7 +9,9 @@ stdenv.mkDerivation rec {
     sha256 = "0jd3qmqdm8yszy0yysbp3syk7pcbxvwzv9mibdwz7v9bv1nrai26";
   };
 
-  nativeBuildInputs = [ makeWrapper asciidoc ];
+  patches = [ ./cross-compile.patch ];
+
+  nativeBuildInputs = [ makeWrapper asciidoc autoreconfHook ];
 
   doCheck = true;
 

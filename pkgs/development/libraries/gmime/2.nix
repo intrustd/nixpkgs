@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
   outputs = [ "out" "dev" ];
 
   nativeBuildInputs = [ pkgconfig gobjectIntrospection ];
-  propagatedBuildInputs = [ glib zlib libgpgerror ];
+  propagatedBuildInputs = [ glib zlib libgpgerror gobjectIntrospection ];
   configureFlags = [ "--enable-introspection=yes" ];
 
   postPatch = ''
