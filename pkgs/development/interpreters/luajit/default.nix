@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchurl }:
+{ stdenv, lib, fetchurl, buildPackages }:
 rec {
 
   luajit = luajit_2_1;
@@ -57,6 +57,8 @@ rec {
 
       buildFlags = [ "amalg" ]; # Build highly optimized version
       enableParallelBuilding = true;
+
+      depsBuildBuild = [ buildPackages.stdenv.cc ];
 
       installPhase   = ''
         make install PREFIX="$out"
