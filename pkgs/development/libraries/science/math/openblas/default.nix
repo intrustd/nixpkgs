@@ -14,6 +14,7 @@ let blas64_ = blas64; enableOpenMp = if openmp then "1" else "0";
     AR = if isCross then "${stdenv.hostPlatform.config}-ar" else "ar";
     CC = if isCross then "${stdenv.hostPlatform.config}-cc" else "gcc";
     FC = if isCross then "${stdenv.hostPlatform.config}-gfortran" else "gfortran";
+    RANLIB = if isCross then "${stdenv.hostPlatform.config}-ranlib" else "ranlib";
 in
 
 let
@@ -118,6 +119,7 @@ stdenv.mkDerivation rec {
   makeFlags =
     [
       "FC=${FC}"
+      "RANLIB=${RANLIB}"
       ''PREFIX="''$(out)"''
       "NUM_THREADS=64"
       "INTERFACE64=${if blas64 then "1" else "0"}"
