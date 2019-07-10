@@ -2,7 +2,8 @@
 , file, glib, gmime, libevent, luajit, openssl, pcre, pkgconfig, sqlite, ragel, icu, libfann }:
 
 let libmagic = file;  # libmagic provided by file package ATM
-    tryRunGuesses = [ "HAVE_ATOMIC_BUILTINS" "HAS_C11_ATOMICS" ] ++
+    tryRunGuesses = [ "HAVE_ATOMIC_BUILTINS" "HAS_C11_ATOMICS"
+                      "BLAS_F2C_DOUBLE_WORKS" "BLAS_F2C_FLOAT_WORKS" ] ++
       lib.optionals stdenv.hostPlatform.isx86 [
         "HAVE_RDTSC" "C_HAS_SSE1_1" "C_HAS_SSE2_1"
         "C_HAS_SSE3_1" "C_HAS_SSE3_2"
