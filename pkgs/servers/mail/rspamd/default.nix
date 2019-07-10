@@ -1,7 +1,18 @@
-{ stdenv, fetchFromGitHub, cmake, perl
+{ stdenv, lib, fetchFromGitHub, cmake, perl, openblasCompat
 , file, glib, gmime, libevent, luajit, openssl, pcre, pkgconfig, sqlite, ragel, icu, libfann }:
 
 let libmagic = file;  # libmagic provided by file package ATM
+    tryRunGuesses = [ "HAVE_ATOMIC_BUILTINS" "HAS_C11_ATOMICS" ] ++
+      lib.optionals stdenv.hostPlatform.isx86 [
+        "HAVE_RDTSC" "C_HAS_SSE1_1" "C_HAS_SSE2_1"
+        "C_HAS_SSE3_1" "C_HAS_SSE3_2"
+        "C_HAS_SSE4_1_1" "C_HAS_SSE4_1_2"
+        "C_HAS_SSE4_2_1" "C_HAS_SSE4_2_2"
+        "C_HAS_AVX_1" "C_HAS_AVX_2" "C_HAS_AVX2_1" "C_HAS_AVX2_2"
+        "CXX_HAS_SSE1_1" "CXX_HAS_SSE2_1" "CXX_HAS_SSE3_1" "CXX_HAS_SSE3_2"
+        "CXX_HAS_SSE4_1_1" "CXX_HAS_SSE4_1_2" "CXX_HAS_SSE4_2_1" "CXX_HAS_SSE4_2_2"
+        "CXX_HAS_AVX_1" "CXX_HAS_AVX_2" "CXX_HAS_AVX2_1" "CXX_HAS_AVX2_2"
+      ];
 in
 
 stdenv.mkDerivation rec {
@@ -16,15 +27,20 @@ stdenv.mkDerivation rec {
   };
 
   nativeBuildInputs = [ cmake pkgconfig perl ];
-  buildInputs = [ glib gmime libevent libmagic luajit openssl pcre sqlite ragel icu libfann ];
+  buildInputs = [ glib gmime libevent libmagic luajit openssl pcre sqlite ragel icu libfann openblasCompat ];
 
-  cmakeFlags = [
+  patches = lib.optional stdenv.hostPlatform.isMusl ./musl-compile.patch;
+
+  cmakeFlags = lib.flatten [
     "-DDEBIAN_BUILD=ON"
     "-DRUNDIR=/var/run/rspamd"
     "-DDBDIR=/var/lib/rspamd"
     "-DLOGDIR=/var/log/rspamd"
     "-DLOCAL_CONFDIR=/etc/rspamd"
-  ];
+  ] ++ lib.optionals (stdenv.hostPlatform != stdenv.buildPlatform) (
+     [ "-D_CAN_RUN=advanced" ] ++
+     (map (x: ["-D${x}_EXITCODE=0" "-D${x}_EXITCODE__TRYRUN_OUTPUT=advanced" ]) (lib.flatten tryRunGuesses))
+  );
 
   meta = with stdenv.lib; {
     homepage = https://github.com/vstakhov/rspamd;
