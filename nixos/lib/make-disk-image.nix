@@ -88,7 +88,7 @@ let format' = format; in let
   nixpkgs = cleanSource pkgs.path;
 
   # FIXME: merge with channel.nix / make-channel.nix.
-  channelSources = pkgs.runCommand "nixos-${config.system.nixos.version}" {} ''
+  channelSources = pkgs.buildPackages.runCommand "nixos-${config.system.nixos.version}" {} ''
     mkdir -p $out
     cp -prd ${nixpkgs} $out/nixos
     chmod -R u+w $out/nixos
@@ -116,7 +116,7 @@ let format' = format; in let
   sources = map (x: x.source) contents;
   targets = map (x: x.target) contents;
 
-  closureInfo = pkgs.closureInfo { rootPaths = [ config.system.build.toplevel channelSources ]; };
+  closureInfo = pkgs.buildPackages.closureInfo { rootPaths = [ config.system.build.toplevel channelSources ]; };
 
   prepareImage = ''
     export PATH=${binPath}
@@ -190,7 +190,7 @@ let format' = format; in let
     echo "copying staging root to image..."
     cptofs -p ${optionalString (partitionTableType != "none") "-P ${rootPartition}"} -t ${fsType} -i $diskImage $root/* /
   '';
-in pkgs.vmTools.runInLinuxVM (
+in pkgs.buildPackages.vmTools.runInLinuxVM (
   pkgs.runCommand name
     { preVM = prepareImage;
       buildInputs = with pkgs; [ utillinux e2fsprogs dosfstools ];
@@ -198,7 +198,7 @@ in pkgs.vmTools.runInLinuxVM (
         ${if format == "raw" then ''
           mv $diskImage $out/${filename}
         '' else ''
-          ${pkgs.qemu}/bin/qemu-img convert -f raw -O ${format} ${compress} $diskImage $out/${filename}
+          ${pkgs.buildPackages.qemu}/bin/qemu-img convert -f raw -O ${format} ${compress} $diskImage $out/${filename}
         ''}
         diskImage=$out/${filename}
         ${postVM}
