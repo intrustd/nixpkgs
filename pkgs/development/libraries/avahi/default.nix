@@ -40,6 +40,8 @@ stdenv.mkDerivation rec {
     avahi-core/socket.c
   '';
 
+  NIX_CFLAGS_COMPILE = "-DAVAHI_SERVICE_DIR=\"/etc/avahi/services\"";
+
   postInstall =
     # Maintain compat for mdnsresponder and howl
     stdenv.lib.optionalString withLibdnssdCompat ''
