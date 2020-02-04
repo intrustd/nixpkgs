@@ -2660,6 +2660,8 @@ in {
 
   py_scrypt = callPackage ../development/python-modules/py_scrypt { };
 
+  Pyro4 = callPackage ../development/python-modules/Pyro4 { };
+
   python_magic = callPackage ../development/python-modules/python-magic { };
 
   magic = callPackage ../development/python-modules/magic { };
