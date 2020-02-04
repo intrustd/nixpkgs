@@ -23,11 +23,18 @@ stdenv.mkDerivation rec {
     sed -i src/pathexec_run.c -e '1i#include <unistd.h>'
     sed -i src/prot.c -e '1i#include <unistd.h>' -e '2i#include <grp.h>'
     sed -i src/seek_set.c -e '1i#include <unistd.h>'
+
+    # usernamespace sandbox of nix seems to conflict with runit's assumptions
+    # about unix users. Therefor skip the check
+    sed -i '/.\/chkshsgr/d' src/Makefile
+    substituteInPlace  src/print-ar.sh \
+      --replace "ar cr" "${stdenv.cc.targetPrefix}ar cr" \
+      --replace "ranlib" "${stdenv.cc.targetPrefix}ranlib"
   '';
 
   configurePhase = ''
-    echo "$NIX_CC/bin/cc $NIX_CFLAGS_COMPILE"   >src/conf-cc
-    echo "$NIX_CC/bin/cc -s"                    >src/conf-ld
+    echo "${stdenv.cc.targetPrefix}cc $NIX_CFLAGS_COMPILE"   >src/conf-cc
+    echo "${stdenv.cc.targetPrefix}cc -s"                    >src/conf-ld
   '';
 
   buildPhase = ''package/compile'';
